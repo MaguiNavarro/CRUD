@@ -1,0 +1,39 @@
+ @model List<Contacto>
+@{
+    ViewData["Title"]= "Listar";
+   
+}
+
+<div class="card">
+  <div class="card-header">
+    Lista Contacto
+  </div>
+  <div class="card-body">
+    <a asp-action="Guardar" asp-controller="Contacto" class=" btn btn-success">Crear Nuevo</a> 
+    <hr/>
+    <table class="table table-bordered">
+        <thead>
+            <tr> 
+                <th>Nombre</th>
+                <th>Telefono</th>
+                <th>Email</th>
+                <th></th>
+            </tr>
+
+        </thead>
+         <tbody>
+            @foreach(var Item in Model){
+               <tr>
+                <td>@Item.Nombre</td>
+                <td>@Item.Telefono</td>
+                <td>@Item.Email</td>
+                <td >
+                     <a asp-action="Editar" asp-controller="Contacto" class="btn btn-primary btn-sm" asp-route-Idcontacto="@Item.Id"> Editar</a>
+                       <a asp-action="Eliminar" asp-controller="Contacto" class="btn btn-danger btn-sm" asp-route-Idcontacto="@Item.Id"> Eliminar</a>
+                </td>
+               </tr>
+            }
+         </tbody>
+    </table>
+  </div>
+ </div>
