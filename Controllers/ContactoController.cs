@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRUD2.Controllers;
@@ -18,7 +17,7 @@ public class ContactoController : Controller
   
 [HttpGet("Listar")]
    public IActionResult Listar(){
-       List<Contacto> lista= _tareaRepository.getContactos();
+       List<Contacto> lista= _tareaRepository.GetContactos();
 
        return View(lista);
    }
@@ -27,72 +26,103 @@ public class ContactoController : Controller
         //METODO SOLO DEVUELVE LA VISTA
         return View();
      }
+[HttpPost("Guardar")]
+public IActionResult Guardar(GuardarViewModel model)
+{
+    if (!ModelState.IsValid)
+    {
+        return View(model);
+    }
 
- [HttpPost ("Guardar")]
-    public IActionResult Guardar(Contacto contacto ){
-        //METODO RECIBE EL OBJETO PARA GUARDARLO BD
-        if (!ModelState.IsValid)
+    // Mapea el ViewModel al modelo de dominio (Contacto)
+    var contacto = new Contacto
+    {
+        Id = model.Id,
+        Nombre = model.Nombre,
+        Telefono = model.Telefono,
+        Email = model.Email
+    };
+
+    bool rpta = _tareaRepository.Guardar(contacto);
+    if (rpta)
+    {
+        return RedirectToAction("Listar");
+    }
+
+    return View(model);
+}
+  [HttpGet]
+ public IActionResult Editar(int id)
+    {
+        Contacto contacto =  _tareaRepository.GetContacto(id);
+        if (contacto == null) return NotFound();
+
+        // Convertimos el modelo a ViewModel para mostrar en la vista.
+        var model = new GuardarViewModel
         {
-            return View();
+            Id = contacto.Id,
+            Nombre = contacto.Nombre,
+            Telefono = contacto.Telefono,
+            Email = contacto.Email
+        };
+        return View(model);
+    }
+      [HttpPost]
+    public IActionResult Editar(GuardarViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            // Convertimos el ViewModel a modelo antes de actualizar.
+            var contacto = new Contacto
+            {
+                Id = model.Id,
+                Nombre = model.Nombre,
+                Telefono = model.Telefono,
+                Email = model.Email
+            };
+            _tareaRepository.Update(contacto);
+            return RedirectToAction("Listar");
         }
-         bool rpta= _tareaRepository.Guardar(contacto);
-         if (rpta)
-         {
-           return RedirectToAction("Listar");
-         }else
-         {
-             return View();
-         }
+        return View(model);
+    }
+[HttpGet("Eliminar/{id}")]
+    public IActionResult Eliminar(int id)
+    {
+        var contacto =_tareaRepository.GetContacto(id);
+        if (contacto == null) return NotFound();
+
+        // No usamos ViewModel porque no se necesitan validaciones en esta acción.
+        return View(contacto);
+    }
+
+   [HttpPost("Eliminar")]
+       public IActionResult ConfirmEliminar(int id)
+    {
+       _tareaRepository.Delete(id);
+        return RedirectToAction("Listar");
+    }
+
+// [HttpPost("Eliminar")]
+// public IActionResult ConfirmEliminar(GuardarViewModel model)
+// {
+//     if (!ModelState.IsValid)
+//     {
+//         return View(model);
+//     }
+
+//     bool rpta = _tareaRepository.Delete(model.Id);
+//     if (rpta)
+//     {
+//         return RedirectToAction("Listar");
+//     }
+
+//     return View(model);
+// }
+
+
+
+
+           
        
-     }
-      [HttpGet ("Editar")]
-       public IActionResult Editar(int Idcontacto ){
-        //METODO SOLO DEVUELVE LA VISTA
-             Contacto cont= _tareaRepository.getContacto(Idcontacto);
-             return View(cont);
-       }
-
-        [HttpPost ("Editar")]
-          public IActionResult Editar(Contacto oContacto ){
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
-              
-               bool rpta= _tareaRepository.Update(oContacto);
-         if (rpta)
-         {
-           return RedirectToAction("Listar");
-         }else
-         {
-             return View();
-         }
-           
-       }
-
-             [HttpGet ("Eliminar")]
-       public IActionResult Eliminar(int Idcontacto ){
-        //METODO SOLO DEVUELVE LA VISTA
-             Contacto cont= _tareaRepository.getContacto(Idcontacto);
-             return View(cont);
-       }
-
-        [HttpPost ("Eliminar")]
-          public IActionResult Eliminar(Contacto oContacto ){
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
-              
-               bool rpta= _tareaRepository.Delete(oContacto.Id);
-         if (rpta)
-         {
-           return RedirectToAction("Listar");
-         }else
-         {
-             return View();
-         }
-           
-       }
 
 }

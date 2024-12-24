@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using System;
+
 public class GuardarViewModel
 {
+   public GuardarViewModel(){
 
+    }
+   
     public int Id { get; set; }
     [Required (ErrorMessage ="El nombre es obligatorio!")][MaxLength(50)]
     public string? Nombre { get; set; }

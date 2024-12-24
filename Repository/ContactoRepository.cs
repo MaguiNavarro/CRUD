@@ -7,7 +7,7 @@ public class ContactoRepository: ITareasRepository
          _cadenaDeConexion= cadenaConexion;
      }
 
-     public List<Contacto> getContactos(){
+     public List<Contacto> GetContactos(){
         string query = "SELECT * FROM Contacto";
         List<Contacto> contactos= new List<Contacto>();
 
@@ -37,7 +37,7 @@ public class ContactoRepository: ITareasRepository
 
      }
 
-        public Contacto getContacto(int id){
+        public Contacto GetContacto(int id){
              string query = "SELECT * FROM Contacto WHERE id= @Id ";
         Contacto contacto= null;
 
@@ -51,7 +51,7 @@ public class ContactoRepository: ITareasRepository
              {
                 while (reader.Read())
                 {
-                      var contact = new Contacto{
+                      contacto = new Contacto{
 
                         Id = Convert.ToInt32(reader["id"]),
                         Nombre= reader["nombre"].ToString(),
@@ -69,7 +69,7 @@ public class ContactoRepository: ITareasRepository
            public bool Update(Contacto contacto ){
              
               bool rpta;
-             string query = "UPDATE Contacto SET id= @Id, nombre= @Nombre , email= @Email, telefono= @Telefono  ";
+             string query = "UPDATE Contacto SET  nombre= @Nombre , email= @Email, telefono= @Telefono WHERE id= @Id ";
             
              try
              {
@@ -98,7 +98,7 @@ public class ContactoRepository: ITareasRepository
    public bool Guardar(Contacto contacto)
 
     {
-        string query = @"INSERT INTO Contacto (nombre, email, telefono) VALUES (@nombre, @email, @telefono);";
+        string query = @"INSERT INTO Contacto (nombre, email, telefono) VALUES (@Nombre, @Email, @Telefono);";
         bool rpta;
         try
         {
@@ -106,9 +106,9 @@ public class ContactoRepository: ITareasRepository
          {
             connection.Open();
             SqliteCommand command = new SqliteCommand(query, connection);
-            command.Parameters.AddWithValue("@nombre", contacto.Nombre);
-            command.Parameters.AddWithValue("@email", contacto.Email);
-            command.Parameters.AddWithValue("@telefono", contacto.Telefono);
+            command.Parameters.AddWithValue("@Nombre", contacto.Nombre);
+            command.Parameters.AddWithValue("@Email", contacto.Email);
+            command.Parameters.AddWithValue("@Telefono", contacto.Telefono);
             command.ExecuteNonQuery();
             connection.Close();
           }
